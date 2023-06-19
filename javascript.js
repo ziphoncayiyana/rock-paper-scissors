@@ -1,68 +1,120 @@
-function getComputerChoice(){
-    const choice = ['rock','paper','scissors'];
-    return choice[Math.floor(Math.random()*choice.length)];
-}
 
-function playRound(playerSelection, computerSelection){
-    playerSelection.toLowerCase();
-    computerSelection.toLowerCase();
-    const outcome=[['rock', 'scissors'],['paper', 'rock'],['scissors', 'paper']];
-    if (playerSelection === computerSelection){
-        return`you draw!! the ${playerSelection} is equal to the ${computerSelection}`;
+// start the game
+function game(){
+    let pScore=0;
+    let cScore=0;
 
-    } else if (playerSelection === outcome[0][0] && computerSelection === outcome[0][1]){
-        return `you win the ${playerSelection} beats the ${computerSelection}`;
-    } else if(playerSelection === outcome[1][0] && computerSelection === outcome[1][1]){
-        return `you win the ${playerSelection} beats the ${computerSelection}`;
-    } else if(playerSelection === outcome[2][0] && computerSelection === outcome[2][1]){
-        return `you win the ${playerSelection} beats the ${computerSelection}`;
-    } else if(playerSelection === outcome[0][1] && computerSelection === outcome[0][0]){
-        return `you lose the ${computerSelection} beats the ${playerSelection}`;
-    } else if(playerSelection === outcome[1][1] && computerSelection[1][0]){
-        return `you lose the ${computerSelection} beats the ${playerSelection}`;
-    } else if(playerSelection === outcome[2][1] && computerSelection === outcome[2][0]){
-        return `you lose the ${computerSelection} beats the ${playerSelection}`;
-    }else{
-        return `you lose! ${computerSelection} beats the ${playerSelection}`;
+    function startGame(){
+        const playerBtn =document.querySelector('.intro button');
+        const intoScreen= document.querySelector('.intro');
+        const match= document.querySelector('.match');
+
+        playerBtn.addEventListener('click', () =>{
+           intoScreen.classList.add('fadeOut'); 
+           match.classList.add('fadeIn');
+        });
     }
-}
+    //play match
+    function playMatch(){
+        const options = document.querySelectorAll('.options button');
+        const playerHand= document.querySelector('.player-hand');
+        const computerHand= document.querySelector('.computer-hand');
+        const hands= document.querySelectorAll('.hands img');
 
-function game() {
-    // Initialize the score.
-    const playerScore = 0;
-    const computerScore = 0;
-  
-    // Play 5 rounds.
-    for (let i = 0; i < 5; i++) {
-      // Get the player's choice.
-      const playerSelection=prompt('choose : rock, paper, scissors:')
-  
-      // Get the computer's choice.
-      const computerSelection = getComputerChoice();
-  
-      // Play a round.
-      const result = playRound(playerSelection, computerSelection);
-  
-      // Update the score.
-      if (result === "You Win!") {
-        playerScore++;
-      } else if (result === "you lose") {
-        computerScore++;
-      }
-  
-      // Display the results of the round.
-      console.log(`Round ${i +1}: ${result}`);
+        hands.forEach(hand =>{
+            hand.addEventListener('animationend', function(){
+                this.style.animation ="";
+            });
+        });
+
+        //computer options
+        const computerOptions =['rock', 'paper', 'scissors'];
+
+        options.forEach(option=>{
+            option.addEventListener('click',function(){
+
+                //computer choice
+                const computerNumber =  Math.floor(Math.random() *3);
+                const computerChoice = computerOptions[computerNumber];
+                
+                setTimeout(() =>{
+                //here is where we call compare hands
+                compterHands(this.textContent, computerChoice)
+
+
+                //update images
+                playerHand.src=`./assets/${this.textContent}.png`;
+                    computerHand.src =`assets/${computerChoice}.png`;
+                }, 2000 );
+
+                //animations
+                playerHand.style.animation = "shakePlayer 2s ease";
+                computerHand.style.animation = "shakeComputer 2s ease";
+            });
+        });
+            
     }
-  
-    // Display the winner.
-    if (playerScore > computerScore) {
-      console.log(`Congratulations! You won the game! Your score is ${playerScore} and the computer's score is ${computerScore}`);
-    } else if (computerScore > playerScore) {
-      console.log(`The computer won the game. Better luck next time! Your score is ${playerScore} and the computer's score is ${computerScore}`);
-    } /*else {
-      console.log(`It's a tie! Play again to see who the true winner is! Your score is ${playerScore} and the computer's score is ${computerScore}`);
-    }*/
-     // Display the score.
-     console.log(`Your score is ${playerScore} and the computer's score is ${computerScore}`);
+    //update the score 
+    function updateScore(){
+        const playerScore= document.querySelector('.player-score p');
+        const computerScore= document.querySelector('.computer-score p');
+        playerScore.textContent= pScore;
+        computerScore.textContent= cScore;
+    }
+
+    function compterHands(playerChoice, computerChoice){
+        const winner = document.querySelector('.winner');
+        if(playerChoice ===computerChoice){
+            winner.textContent = `It's is a tie`;
+            return;
+        }
+        // check for rock
+        if(playerChoice === 'rock'){
+            if(computerChoice === 'scissors'){
+                winner.textContent = 'Player wins';
+                pScore++;
+                updateScore();
+                return;
+            } else{
+                winner.textContent = 'Computer wins';
+                cScore++;
+                updateScore();
+                return;
+            }
+        }
+        // check for paper
+        if(playerChoice === 'paper'){
+            if(computerChoice === 'scissors'){
+                winner.textContent = 'Computer wins';
+                cScore++;
+                updateScore();
+                return;
+            } else{
+                winner.textContent = 'Player wins';
+                pScore++;
+                updateScore();
+                return;
+            }
+        }
+        // check for scissor
+        if(playerChoice === 'scissors'){
+            if(computerChoice === 'rock'){
+                winner.textContent = 'Computer wins';
+                cScore++;
+                updateScore();
+                return;
+            } else{
+                winner.textContent = 'Player wins';
+                pScore++;
+                updateScore();
+                return;
+            }
+        }
+    }
+
+    //it's call all the inner function
+    startGame();
+    playMatch();
 }
+//start the game function
 game();
